@@ -23,51 +23,46 @@ df_route = load_route()
 st.sidebar.title("Suly Transit System")
 role = st.sidebar.radio("Select Portal:", ["🚶 Pedestrian View", "👨‍✈️ Driver Broadcast"])
 
-# --- 4. DRIVER PORTAL ---
+# --- 4. DRIVER PORTAL (Stable Tracking) ---
 if role == "👨‍✈️ Driver Broadcast":
     st.header("Driver Tracking Mode")
 
-    if 'tracking_active' not in st.session_state:
-        st.session_state.tracking_active = False
+    # This keeps the tracking running even if the GPS pings refresh the page
+    if 'is_tracking' not in st.session_state:
+        st.session_state.is_tracking = False
 
-    if not st.session_state.tracking_active:
+    if not st.session_state.is_tracking:
         with st.form("driver_info"):
-            st.session_state.driver_name = st.text_input("Driver Name")
-            st.session_state.plate = st.text_input("Bus Plate Number")
-            submit = st.form_submit_button("Start Shift")
-            if submit:
-                st.session_state.tracking_active = True
+            st.session_state.d_name = st.text_input("Driver Name")
+            st.session_state.d_plate = st.text_input("Bus Plate Number")
+            if st.form_submit_button("Start Shift"):
+                st.session_state.is_tracking = True
                 st.rerun()
     else:
-        st.success(f"🚀 Tracking Active for {st.session_state.plate}")
+        st.success(f"🚀 Tracking Active for {st.session_state.d_plate}")
         if st.button("Stop Shift"):
-            st.session_state.tracking_active = False
+            st.session_state.is_tracking = False
             st.rerun()
         
         status = st.empty()
-        while st.session_state.tracking_active:
+        while st.session_state.is_tracking:
             loc = get_geolocation()
             if loc:
                 lat, lon = loc['coords']['latitude'], loc['coords']['longitude']
                 
-                # A. Update Map
-                supabase.table("live_bus_data").upsert({
-                    "plate_number": st.session_state.plate, 
-                    "driver_name": st.session_state.driver_name, 
-                    "lat": lat, "lon": lon
-                }, on_conflict="plate_number").execute()
+                # A. Update Map (Matches your Supabase columns exactly)
+                live_data = {"plate_number": st.session_state.d_plate, "driver_name": st.session_state.d_name, "lat": lat, "lon": lon}
+                supabase.table("live_bus_data").upsert(live_data, on_conflict="plate_number").execute()
                 
-                # B. Save History
-                supabase.table("bus_location_history").insert({
-                    "plate_number": st.session_state.plate, 
-                    "lat": lat, "lon": lon
-                }).execute()
+                # B. Save History for Thesis/Spark analysis
+                history_data = {"plate_number": st.session_state.d_plate, "lat": lat, "lon": lon}
+                supabase.table("bus_location_history").insert(history_data).execute()
                 
                 with status.container():
                     st.info(f"📡 Last Ping: {time.strftime('%H:%M:%S')}")
-                    st.write(f"Logged: {lat}, {lon}")
+                    st.write(f"Logged Position: {lat}, {lon}")
             
-            time.sleep(15)
+            time.sleep(15) 
             st.rerun()
 
 # --- 5. PEDESTRIAN VIEW ---
