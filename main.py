@@ -6,10 +6,9 @@ from supabase import create_client, Client
 from streamlit_js_eval import get_geolocation
 import time
 
-# Values from your screenshots
-URL = "https://wvbrpclzdvcvkbgehxfu.supabase.co"
-KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind2YnJwY2x6ZHZjdmtiZ2VoeGZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI0OTEyNDAsImV4cCI6MjA4ODA2NzI0MH0.DnMn4u5drKcETVTv4tFKz-7uv5AEisU36q1hEm0rE2k" # Paste the full long key from your screen here
-
+# --- 1. CLOUD CONNECTION ---
+URL = st.secrets["URL"]
+KEY = st.secrets["KEY"]
 supabase: Client = create_client(URL, KEY)
 
 st.set_page_config(page_title="Suly Bus Digital Twin", layout="wide")
@@ -17,19 +16,18 @@ st.set_page_config(page_title="Suly Bus Digital Twin", layout="wide")
 # --- 2. LOAD ROUTE DATA ---
 @st.cache_data
 def load_route():
-    # Ensure 'l v l.csv' is in the same folder as this script
     return pd.read_csv('l v l.csv')
 
 df_route = load_route()
 
 # --- 3. INTERFACE NAVIGATION ---
-st.title("🚌 Sulaymaniyah Transit Digital Twin")
+st.sidebar.title("Suly Transit System")
 role = st.sidebar.radio("Select Portal:", ["🚶 Pedestrian View", "👨‍✈️ Driver Broadcast"])
 
-# --- 4. DRIVER PORTAL (Data Ingestion) ---
+# --- 4. DRIVER PORTAL (Tracking & Saving) ---
 if role == "👨‍✈️ Driver Broadcast":
     st.header("Driver Tracking Mode")
-    st.info("Keep this tab open to broadcast your live location.")
+    st.info("Click 'Start Shift' to begin broadcasting and saving data to history.")
     
     with st.form("driver_info"):
         name = st.text_input("Driver Name")
@@ -37,31 +35,43 @@ if role == "👨‍✈️ Driver Broadcast":
         start = st.form_submit_button("Start Shift")
 
     if start:
-        st.success(f"Broadcasting for {plate}...")
-        # Browser-based GPS capture
-        loc = get_geolocation()
-        if loc:
-            lat, lon = loc['coords']['latitude'], loc['coords']['longitude']
-            # Push to Supabase
-            data = {"plate_number": plate, "driver_name": name, "lat": lat, "lon": lon}
-            supabase.table("live_bus_data").upsert(data, on_conflict="plate_number").execute()
-            st.write(f"Updated: {lat}, {lon}")
+        st.success(f"Tracking started for {plate}. Keep this tab open.")
+        
+        # Dashboard keeps the screen from flickering wildly
+        dashboard = st.empty()
+        
+        while True:
+            loc = get_geolocation()
+            if loc:
+                lat = loc['coords']['latitude']
+                lon = loc['coords']['longitude']
+                
+                # A. UPDATE LIVE MAP (Overwrites current location for pedestrians)
+                live_data = {"plate_number": plate, "driver_name": name, "lat": lat, "lon": lon}
+                supabase.table("live_bus_data").upsert(live_data, on_conflict="plate_number").execute()
+                
+                # B. SAVE TO HISTORY (NEW: Creates a permanent record for your thesis)
+                history_data = {"plate_number": plate, "lat": lat, "lon": lon}
+                supabase.table("bus_location_history").insert(history_data).execute()
+                
+                with dashboard.container():
+                    st.info("📡 GPS Active - Every 15s point saved to History")
+                    st.write(f"📍 Current: {lat:.5f}, {lon:.5f}")
+                    st.write(f"🕒 Last Ping: {time.strftime('%H:%M:%S')}")
+            
+            # Wait 15 seconds then refresh the GPS
+            time.sleep(15) 
+            st.rerun() 
 
-# --- 5. PEDESTRIAN PORTAL (Real-Time Map) ---
+# --- 5. PEDESTRIAN PORTAL (Real-Time View) ---
 else:
     st.header("Real-Time Bus Tracker")
-    
-    # Fetch live buses from Cloud
     response = supabase.table("live_bus_data").select("*").execute()
     live_buses = response.data
 
-    # Initialize Folium Map
     m = folium.Map(location=[35.5852, 45.4390], zoom_start=14)
-    
-    # Draw the static 319-point route
     folium.PolyLine(df_route[['Y', 'X']].values, color="blue", weight=5, opacity=0.7).add_to(m)
 
-    # Plot live buses
     if live_buses:
         for bus in live_buses:
             folium.Marker(
@@ -69,12 +79,9 @@ else:
                 popup=f"Bus: {bus['plate_number']}",
                 icon=folium.Icon(color='red', icon='bus', prefix='fa')
             ).add_to(m)
-            st.write(f"✅ Bus {bus['plate_number']} is currently active.")
-    else:
-        st.warning("No buses are currently broadcasting.")
-
+    
     st_folium(m, width=1200, height=600)
 
-# Auto-refresh the page every 10 seconds for real-time feel
-time.sleep(10)
-st.rerun()
+if role == "🚶 Pedestrian View":
+    time.sleep(20)
+    st.rerun()
