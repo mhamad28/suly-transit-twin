@@ -4,6 +4,4 @@ folium
 streamlit-folium
 supabase
 streamlit-js-eval
-folium
-streamlit-folium
 geopy
