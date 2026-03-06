@@ -130,6 +130,23 @@ def geocode_address(address: str):
     if not address.strip():
         return None
 
+    address = address.strip()
+
+    # Support raw coordinates: "lat, lon"
+    if "," in address:
+        parts = [p.strip() for p in address.split(",")]
+        if len(parts) == 2:
+            try:
+                lat = float(parts[0])
+                lon = float(parts[1])
+                return {
+                    "label": f"Selected coordinates ({lat:.5f}, {lon:.5f})",
+                    "lat": lat,
+                    "lon": lon,
+                }
+            except ValueError:
+                pass
+
     try:
         query = f"{address}, Sulaymaniyah, Iraq"
         result = geocoder.geocode(query, timeout=10)
@@ -215,7 +232,7 @@ def save_driver_ping(driver_name, plate_number, line_id, lat, lon):
         "recorded_at": now_iso,
     }
 
-    # Live table: delete old row for same plate, then insert fresh row
+    # Live table: keep only latest row for a bus
     supabase.table("live_bus_data").delete().eq("plate_number", plate_number).execute()
     supabase.table("live_bus_data").insert(live_data).execute()
 
@@ -229,6 +246,7 @@ def build_passenger_map(
     origin_point=None,
     destination_point=None,
     highlight_route=None,
+    show_all_lines=True,
 ):
     m = folium.Map(
         location=[35.56, 45.43],
@@ -241,9 +259,17 @@ def build_passenger_map(
         route_name = feature["properties"].get("layer", "Bus Route")
         color = ROUTE_COLORS.get(route_name, "#00bfff")
 
+        # If full network is off, only show highlighted route
+        if not show_all_lines and highlight_route and route_name != highlight_route:
+            continue
+
         if highlight_route:
-            opacity = 0.95 if route_name == highlight_route else 0.25
-            weight = 6 if route_name == highlight_route else 3
+            if route_name == highlight_route:
+                opacity = 0.95
+                weight = 6
+            else:
+                opacity = 0.25 if show_all_lines else 0
+                weight = 3
         else:
             opacity = 0.85
             weight = 5
@@ -298,7 +324,7 @@ defaults = {
     "line_id": "",
     "origin_point": None,
     "destination_point": None,
-    "pick_mode": None,  # "origin" or "destination"
+    "pick_mode": None,
 }
 for key, value in defaults.items():
     if key not in st.session_state:
@@ -473,7 +499,6 @@ else:
 
         st.markdown("</div>", unsafe_allow_html=True)
 
-        # NEW: Toggle for showing full bus network
         show_all_lines = st.checkbox("Show all bus lines", value=True)
 
         highlight_route = None
