@@ -422,7 +422,7 @@ else:
             if input_mode == "Type address":
                 origin_text = st.text_input(
                     "Origin",
-                    placeholder="Example: Azadi Park",
+                    placeholder="Example: Azadi Park or 35.576151, 45.337101",
                     key="origin_text_input",
                 )
                 if st.button("Set origin from address"):
@@ -441,7 +441,7 @@ else:
             if input_mode == "Type address":
                 destination_text = st.text_input(
                     "Destination",
-                    placeholder="Example: City Center",
+                    placeholder="Example: City Center or 35.560000, 45.430000",
                     key="destination_text_input",
                 )
                 if st.button("Set destination from address"):
@@ -473,6 +473,9 @@ else:
 
         st.markdown("</div>", unsafe_allow_html=True)
 
+        # NEW: Toggle for showing full bus network
+        show_all_lines = st.checkbox("Show all bus lines", value=True)
+
         highlight_route = None
         if st.session_state.origin_point and st.session_state.destination_point:
             origin_route = nearest_route(
@@ -496,6 +499,7 @@ else:
             origin_point=st.session_state.origin_point,
             destination_point=st.session_state.destination_point,
             highlight_route=highlight_route,
+            show_all_lines=show_all_lines,
         )
 
         map_data = st_folium(passenger_map, height=650, width="stretch")
