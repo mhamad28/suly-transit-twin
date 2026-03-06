@@ -30,8 +30,8 @@ def set_background(image_file: str) -> None:
     <style>
     .stApp {{
         background-image: linear-gradient(
-            rgba(10, 15, 30, 0.35),
-            rgba(10, 15, 30, 0.50)
+            rgba(10, 15, 30, 0.55),
+            rgba(10, 15, 30, 0.70)
         ), url("data:image/jpg;base64,{encoded}");
         background-size: cover;
         background-position: center;
