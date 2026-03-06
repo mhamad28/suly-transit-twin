@@ -263,7 +263,6 @@ def build_passenger_map(
         route_name = feature["properties"].get("layer", "Bus Route")
         color = ROUTE_COLORS.get(route_name, "#00bfff")
 
-        # All routes
         folium.GeoJson(
             feature,
             name=route_name,
@@ -275,7 +274,6 @@ def build_passenger_map(
             },
         ).add_to(all_routes_layer)
 
-        # Highlighted route only
         if highlight_route and route_name == highlight_route:
             folium.GeoJson(
                 feature,
@@ -446,6 +444,14 @@ else:
         st.markdown('<div class="glass-card">', unsafe_allow_html=True)
         st.subheader("Trip Planner")
 
+        reset_col1, reset_col2 = st.columns([1, 5])
+        with reset_col1:
+            if st.button("🔄 Reset Trip"):
+                st.session_state.origin_point = None
+                st.session_state.destination_point = None
+                st.session_state.pick_mode = None
+                st.rerun()
+
         input_mode = st.radio(
             "Choose input mode",
             ["Type address", "Choose from map"],
@@ -506,6 +512,11 @@ else:
                     st.success("Current location set as origin.")
                 else:
                     st.warning("Could not get your current location.")
+
+        if st.session_state.origin_point:
+            st.info(f"Origin: {st.session_state.origin_point['label']}")
+        if st.session_state.destination_point:
+            st.info(f"Destination: {st.session_state.destination_point['label']}")
 
         st.markdown("</div>", unsafe_allow_html=True)
 
