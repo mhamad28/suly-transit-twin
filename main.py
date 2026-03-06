@@ -250,9 +250,23 @@ def build_passenger_map(
     m = folium.Map(
         location=[35.56, 45.43],
         zoom_start=12,
-        tiles="OpenStreetMap",
+        tiles=None,
         control_scale=True,
     )
+
+    # Base maps
+    folium.TileLayer(
+        tiles="OpenStreetMap",
+        name="Street Map",
+        control=True
+    ).add_to(m)
+
+    folium.TileLayer(
+        tiles="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        attr="Source: Esri, Maxar, Earthstar Geographics",
+        name="Satellite",
+        control=True
+    ).add_to(m)
 
     all_routes_layer = folium.FeatureGroup(name="Bus Lines", show=True)
     recommended_layer = folium.FeatureGroup(name="Recommended Route", show=True)
