@@ -5,6 +5,38 @@ import time
 from datetime import datetime, timezone
 from supabase import create_client, Client
 from streamlit_js_eval import get_geolocation
+import base64
+
+def set_background(image_file):
+    with open(image_file, "rb") as img:
+        encoded = base64.b64encode(img.read()).decode()
+
+    page_bg = f"""
+    <style>
+    .stApp {{
+        background-image: linear-gradient(
+            rgba(10, 15, 30, 0.85),
+            rgba(10, 15, 30, 0.95)
+        ), url("data:image/jpg;base64,{encoded}");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+    }}
+
+    [data-testid="stHeader"] {{
+        background: rgba(0,0,0,0);
+    }}
+
+    [data-testid="stSidebar"] {{
+        background: rgba(15,20,40,0.9);
+    }}
+    </style>
+    """
+
+    st.markdown(page_bg, unsafe_allow_html=True)
+    st.set_page_config(page_title="Suly Transit System", layout="wide")
+
+set_background("assets/suli_bg.jpg")
 
 # ----------------------------
 # CONFIG
