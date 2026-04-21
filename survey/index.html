@@ -1,1 +1,509 @@
-go
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ڕاپرسی گواستنەوەی گشتی</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+Arabic:wght@400;500;600&display=swap');
+:root{
+  --bg:#f5f4f0;--card:#fff;--border:#e2e0d8;--text:#1a1916;
+  --muted:#6b6860;--hint:#a09d96;
+  --blue:#2563eb;--blu:#eff4ff;--blub:#bfcffd;
+  --green:#16a34a;--grn:#f0fdf4;
+  --amber:#d97706;--amb:#fffbeb;--ambb:#fcd34d;
+  --red:#dc2626;--rld:#fef2f2;
+  --r:10px;--rs:6px;
+  --kf:'Noto Sans Arabic',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:20px 16px 60px;}
+.wrap{max-width:600px;margin:0 auto;}
+.top{text-align:center;margin-bottom:24px;padding-top:8px;}
+.ctag{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:var(--muted);background:var(--border);padding:3px 10px;border-radius:99px;margin-bottom:14px;}
+.tk{font-family:var(--kf);font-size:20px;font-weight:600;direction:rtl;line-height:1.7;margin-bottom:2px;}
+.te{font-size:17px;font-weight:600;margin-bottom:10px;}
+.sk{font-family:var(--kf);font-size:12px;color:var(--muted);direction:rtl;line-height:1.7;margin-bottom:2px;}
+.se{font-size:12px;color:var(--muted);}
+.intro-box{margin-top:14px;background:#fff;border:.5px solid var(--blub);border-radius:var(--r);padding:12px 14px;text-align:left;}
+.intro-krd{font-family:var(--kf);font-size:13px;color:#1d4ed8;direction:rtl;text-align:right;line-height:1.7;margin-bottom:6px;}
+.intro-en{font-size:12px;color:var(--muted);line-height:1.6;}
+.pw{margin-bottom:20px;}
+.pt{height:3px;background:var(--border);border-radius:99px;overflow:hidden;}
+.pf{height:3px;background:var(--blue);border-radius:99px;transition:width .5s ease;}
+.pm{display:flex;justify-content:space-between;margin-top:5px;font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--hint);}
+.sv{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--hint);margin-bottom:14px;height:18px;}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--border);flex-shrink:0;transition:background .3s;}
+.dot.saving{background:var(--amber);animation:pl .8s infinite;}
+.dot.saved{background:var(--green);}
+.dot.err{background:var(--red);}
+@keyframes pl{0%,100%{opacity:1}50%{opacity:.3}}
+.sk2{font-family:var(--kf);font-size:11px;}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:500;color:var(--blue);background:var(--blu);border:.5px solid var(--blub);padding:4px 12px;border-radius:99px;margin-bottom:16px;flex-wrap:wrap;}
+.pk{font-family:var(--kf);direction:rtl;font-size:11px;}
+.ps{opacity:.35;margin:0 2px;}
+/* Context box */
+.ctx-box{background:var(--amb);border:.5px solid var(--ambb);border-radius:var(--r);padding:12px 14px;margin-bottom:14px;}
+.ctx-krd{font-family:var(--kf);font-size:13px;color:#92400e;direction:rtl;text-align:right;line-height:1.7;margin-bottom:4px;font-weight:500;}
+.ctx-en{font-size:12px;color:#92400e;line-height:1.5;}
+/* Note box */
+.note-box{background:var(--blu);border:.5px solid var(--blub);border-radius:var(--r);padding:12px 14px;margin-bottom:14px;}
+.note-krd{font-family:var(--kf);font-size:12px;color:#1d4ed8;direction:rtl;text-align:right;line-height:1.7;margin-bottom:4px;}
+.note-en{font-size:11px;color:#1d4ed8;line-height:1.5;}
+.qc{background:var(--card);border:.5px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px;}
+.qn{font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--hint);margin-bottom:10px;letter-spacing:.06em;}
+.bq{display:flex;gap:10px;margin-bottom:14px;align-items:flex-start;}
+.bqe{font-size:13px;font-weight:500;line-height:1.5;flex:1;color:var(--text);min-width:0;}
+.bqk{font-family:var(--kf);font-size:14px;font-weight:600;line-height:1.7;flex:1;direction:rtl;text-align:right;color:var(--text);min-width:0;word-break:break-word;overflow-wrap:break-word;}
+.bh{display:flex;justify-content:space-between;gap:8px;margin-bottom:10px;align-items:center;}
+.bhe{font-size:11px;color:var(--hint);font-family:'IBM Plex Mono',monospace;}
+.bhk{font-family:var(--kf);font-size:11px;color:var(--hint);direction:rtl;}
+.opts{display:flex;flex-direction:column;gap:6px;}
+.opt{display:flex;align-items:center;gap:10px;padding:10px 12px;border:.5px solid var(--border);border-radius:var(--rs);cursor:pointer;background:#fafafa;width:100%;text-align:left;transition:border-color .15s,background .15s;overflow:hidden;}
+.opt:hover{border-color:#b8b4aa;background:#f5f3ef;}
+.opt.sel{border-color:var(--blue);background:var(--blu);}
+.opt.sel .ci{border-color:var(--blue);background:var(--blue);}
+.opt.sel .cd{display:block;}
+.opt.sel .sq{border-color:var(--blue);background:var(--blue);}
+.opt.sel .ck{display:block;}
+.ci{width:15px;height:15px;border-radius:50%;border:1.5px solid #c8c5be;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.cd{display:none;width:6px;height:6px;background:#fff;border-radius:50%;}
+.sq{width:15px;height:15px;border-radius:3px;border:1.5px solid #c8c5be;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.ck{display:none;}
+.bo{display:flex;justify-content:space-between;align-items:flex-start;width:100%;gap:8px;flex-wrap:wrap;}
+.boe{font-size:13px;color:var(--muted);flex-shrink:0;max-width:45%;}
+.bok{font-family:var(--kf);font-size:13px;color:var(--text);direction:rtl;text-align:right;flex:1;min-width:0;word-break:break-word;overflow-wrap:break-word;}
+.opt.sel .boe{color:#1d4ed8;}
+.opt.sel .bok{color:#1d4ed8;}
+.lr{display:flex;gap:5px;}
+.lk{flex:1;padding:8px 3px;border:.5px solid var(--border);border-radius:var(--rs);font-size:10px;text-align:center;cursor:pointer;color:var(--muted);background:#fafafa;line-height:1.35;transition:all .15s;}
+.lk:hover{border-color:#b8b4aa;background:#f5f3ef;}
+.lk.sel{border-color:var(--blue);background:var(--blu);color:#1d4ed8;font-weight:500;}
+.lkk{font-family:var(--kf);font-size:11px;display:block;direction:rtl;margin-bottom:2px;}
+.yr{display:flex;gap:7px;}
+.yn{flex:1;padding:10px 6px;border:.5px solid var(--border);border-radius:var(--rs);font-size:12px;font-weight:500;text-align:center;cursor:pointer;color:var(--text);background:#fafafa;transition:all .15s;line-height:1.5;}
+.yn:hover{background:#f5f3ef;border-color:#b8b4aa;}
+.yn.y{border-color:var(--green);background:var(--grn);color:#15803d;}
+.yn.m{border-color:var(--blue);background:var(--blu);color:#1d4ed8;}
+.yn.n{border-color:var(--red);background:var(--rld);color:#b91c1c;}
+.ynk{font-family:var(--kf);font-size:13px;display:block;direction:rtl;font-weight:600;}
+.nt{display:flex;gap:8px;margin-bottom:10px;}
+.nb{flex:1;padding:9px;border:.5px solid var(--border);border-radius:var(--rs);font-size:12px;font-weight:500;text-align:center;cursor:pointer;color:var(--muted);background:#fafafa;transition:all .15s;line-height:1.5;}
+.nb:hover{background:#f5f3ef;}
+.nb.act{border-color:var(--blue);background:var(--blu);color:#1d4ed8;}
+.nk{font-family:var(--kf);font-size:12px;display:block;direction:rtl;font-weight:500;}
+.nw{display:none;}
+.nw.show{display:block;}
+.ni{width:100%;padding:10px 12px;border:.5px solid var(--border);border-radius:var(--rs);font-size:13px;color:var(--text);background:#fafafa;outline:none;transition:border-color .15s;}
+.ni:focus{border-color:var(--blue);}
+.lb{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:11px;border:.5px solid var(--border);border-radius:var(--rs);font-size:12px;font-weight:500;color:var(--text);background:#fafafa;cursor:pointer;transition:all .15s;line-height:1.5;}
+.lb:hover{background:#f5f3ef;}
+.lb.got{border-color:var(--green);background:var(--grn);color:#15803d;}
+.ls{font-size:12px;color:var(--muted);margin-top:7px;min-height:16px;}
+.sl{display:block;text-align:center;margin-top:10px;font-size:12px;color:var(--hint);cursor:pointer;text-decoration:underline;}
+.nav{display:flex;justify-content:space-between;align-items:center;margin-top:20px;gap:10px;}
+.btn{padding:10px 20px;border-radius:var(--rs);font-size:12px;font-weight:500;cursor:pointer;border:.5px solid var(--border);background:var(--card);color:var(--text);transition:all .15s;line-height:1.5;}
+.btn:hover{background:#f0ede8;}
+.btn:disabled{opacity:.35;cursor:default;}
+.btn.pri{background:var(--blue);color:#fff;border-color:var(--blue);}
+.btn.pri:hover{background:#1d4ed8;}
+.btn.sub{background:var(--green);color:#fff;border-color:var(--green);}
+.btn.sub:hover{background:#15803d;}
+.bk{font-family:var(--kf);font-size:12px;display:block;direction:rtl;font-weight:500;}
+.sds{display:flex;gap:4px;align-items:center;}
+.sd{width:5px;height:5px;border-radius:50%;background:var(--border);transition:all .3s;}
+.sd.dn{background:var(--green);}
+.sd.ac{background:var(--blue);width:14px;border-radius:99px;}
+#ty{display:none;}
+.tyb{background:var(--card);border:.5px solid var(--border);border-radius:var(--r);padding:40px 24px;text-align:center;margin-top:20px;}
+.tyi{width:52px;height:52px;border-radius:50%;background:var(--grn);border:1px solid #bbf7d0;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;}
+.tyk{font-family:var(--kf);font-size:22px;font-weight:600;direction:rtl;margin-bottom:4px;}
+.tye{font-size:18px;font-weight:600;margin-bottom:10px;}
+.tsk{font-family:var(--kf);font-size:13px;color:var(--muted);direction:rtl;line-height:1.7;margin-bottom:4px;}
+.tse{font-size:13px;color:var(--muted);line-height:1.6;}
+.tid{display:inline-block;margin-top:14px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--hint);background:var(--bg);padding:4px 12px;border-radius:99px;border:.5px solid var(--border);}
+@media(max-width:400px){
+  .bqe{font-size:12px;} .bqk{font-size:13px;}
+  .boe{font-size:12px;max-width:42%;} .bok{font-size:12px;}
+  .lk{font-size:9px;padding:6px 2px;} .lkk{font-size:9px;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div id="sb">
+    <div class="top">
+      <div class="ctag">کوردستان · گواستنەوەی گشتی</div>
+      <div class="tk">ڕاپرسی سەبارەت بە گواستنەوەی گشتی لە کوردستان</div>
+      <div class="te">Public Transport Survey in Kurdistan</div>
+      <div class="intro-box">
+        <div class="intro-krd">ئەم ڕاپرسییە بەشێکە لە هەوڵێکی توێژینەوەیی بۆ باشترکردنی گواستنەوەی گشتی لە کوردستان. سوپاس بۆ تەرخانکردنی کاتت و بۆچوونی تۆ گرنگە بۆمان .</div>
+        <div class="intro-en">This is a research effort to improve public transport across Kurdistan, your feedback is equally valuable and very much appreciated.</div>
+      </div>
+    </div>
+    <div class="pw">
+      <div class="pt"><div class="pf" id="pf" style="width:10%"></div></div>
+      <div class="pm"><span id="sl">Section 1 of 10</span><span id="pc">10%</span></div>
+    </div>
+    <div class="sv"><div class="dot" id="dt"></div><span id="st"><span class="sk2">ئامادەیە</span> Ready</span></div>
+    <div id="pill" class="pill"></div>
+    <div id="ctx" style="display:none"></div>
+    <div id="note" style="display:none"></div>
+    <div id="qa"></div>
+    <div class="nav">
+      <button class="btn" id="bb" onclick="go(-1)" disabled><span class="bk">← گەڕانەوە</span>← Back</button>
+      <div class="sds" id="ds"></div>
+      <button class="btn pri" id="nb" onclick="go(1)"><span class="bk">دواتر ←</span>Next →</button>
+    </div>
+  </div>
+  <div id="ty">
+    <div class="tyb">
+      <div class="tyi"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="tyk">سوپاس!</div>
+      <div class="tye">Thank you!</div>
+      <div class="tsk">وەڵامەکەت پارێزراوە. سوپاس بۆ بەژداریکردنت لە باشترکردنی گواستنەوەی گشتی لە کوردستان.</div>
+      <div class="tse">Your response has been saved. Thank you for helping improve public transport.</div>
+      <div class="tid" id="tid"></div>
+    </div>
+  </div>
+</div>
+<script>
+var SU='https://lvywufmgugkdwswwwsxq.supabase.co';
+var SK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx2eXd1Zm1ndWdrZHdzd3d3c3hxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MzExMjYsImV4cCI6MjA5MTAwNzEyNn0.MkV37QFomOPV6S-PW1Lx1RPbBJZSQyxNv_11P1_4W-U';
+var SID='sess_'+Math.random().toString(36).slice(2)+Date.now().toString(36);
+var A={};var cur=0;var rEx=false;
+
+var PR=[‘Duhok’,‘Halabja’,‘Hawler’,‘Kirkuk’,‘Sulaymaniyah’];
+
+var KQ={
+q1:‘لە کام پارێزگاوە لەگەڵمانی؟’,
+q2:‘تەمەنت لە نێوانی چەنە؟’,
+q3:’(ئارەزوومەندانە) ناوت، ئیمەیڵ یان شوێنەکەت بنووسە’,
+q4:‘ڕۆژانە زیاتر بە چی هاتوچۆ ئەکەیت؟’,
+q5:‘ئەگەر پاس بەکاربێنی، زیاتر بۆچی بەکاری ئەهێنی؟’,
+q6:‘ئەگەر پاس بەکارناهێنی بۆ؟’,
+q7:‘ئەگەر بە پاس چوون هەمان کاتی ئۆتۆمبێلەکەت بخایەنێ، ئامادەی پاس هەڵبژێری؟’,
+q8:‘ئەگەر بە پاس چوون ٥ خولەک زیاتر بخایەنێ لە ئۆتۆمبێلەکەت، هەر ئامادەی بەکاری بێنی؟’,
+q9:‘ئەگەر بە پاس چوون ١٠ تا ١٥ خولەک زیاتر بخایەنێ، هەر ئامادەی بەکاری بێنی؟’,
+q10:‘چەند گۆڕین ئامادەیت بیکەی بۆ گەشتن بە شوێنی مەبەستت؟’,
+q11:‘ئەگەر خزمەتگوزاری پاس لای شوێنی نیشتەجێبوون و شوێنی ئیشەکەت هەبێ، ئامادەی زۆربەی کات بەکاری بێنی لەجیاتی ئۆتۆمبێلی تایبەتی؟’,
+q12:‘پاسەکانی شاری خۆت بە کاتەوە چۆن دەبینیت؟’,
+q14:‘چەندە ئاسانە زانیاری ڕێگا و کاتەکانی پاسەکان بدۆزیتەوە؟’,
+q15:‘پێتوایە چ شتێک وادەکات زیاتر پاس بەکار بهێنرێت؟’,
+q16:‘ئایا ئەتزانی؟ سلێمانی نزیکەی ٣٩ هێڵی پاسی هەیە کە بە زۆربەی شوێنەکانی شارەکە دەگەن’,
+q17:‘بۆچوون و پێشنیار؟ ئەگەر دەتەوێت بەشێک بیت لەم پرۆژەیە و یارمەتی بدەیت گواستنەوەی گشتی بکرێتە دیجیتاڵ و باشتر بۆ هەموو شارەکانی کوردستان — ئێرە بنووسە’
+};
+
+var KO={
+‘Duhok’:‘دهۆک’,‘Halabja’:‘هەڵەبجە’,‘Hawler’:‘هەولێر’,‘Kirkuk’:‘کەرکووک’,‘Sulaymaniyah’:‘سلێمانی’,
+‘Under 18’:‘لە ژێر ١٨’,‘18–25’:‘١٨–٢٥’,‘26–40’:‘٢٦–٤٠’,‘41–60’:‘٤١–٦٠’,‘60+’:‘٦٠+’,
+‘Bus’:‘پاس’,‘Taxi’:‘تاکسی’,‘Private car’:‘ئۆتۆمبێلی تایبەت’,
+‘Work’:‘کار’,‘School / University’:‘قوتابخانە / زانکۆ’,‘Shopping’:‘بازاڕکردن’,
+‘Visiting friends or family’:‘سەردانی هاوڕێ و خێزان’,‘Other’:‘هیتر’,
+‘No official app for schedules and routes’:‘ئەپی فەرمی بۆ کاتژمێر و ڕێگاکانی پاس نییە’,
+‘I prefer using my own car’:‘باشتر وایە ئۆتۆمبێل بەکار بهێنم’,
+‘No fixed bus stops’:‘وێستگەی دیاریکراوی نییە’,
+‘Long waiting times’:‘کاتی چاوەڕوانی درێژەیە’,
+‘Bus routes don't reach my area’:‘دەوروبەری شوێنی نیشتەجێبوونم ڕێگای پاسی بەسەرەوە نییە’,
+‘Buses are not clean’:‘پاسەکان پاک نین’,
+‘Not enough seats’:‘شوێنی دانیشتن کەمە’,
+‘Not accessible for people with special needs’:‘ڕێگای سەرکەوتن نییە بۆ خاوەنپێداویستی تایبەت’,
+‘Yes’:‘بەڵێ’,‘Maybe’:‘لەوانەیە’,‘No’:‘نەخێر’,
+‘No changes, direct — one bus’:‘بێ گۆڕین، ڕاستەوخۆ یەک پاس’,
+‘1 change — two buses’:‘١ گۆڕین، دوو پاس’,
+‘2 changes — three buses’:‘٢ گۆڕین، ٣ پاس’,
+‘I would not use buses’:‘پاس بەکار ناهێنم’,
+‘There is no schedule at all’:‘هیچ خشتەیەک نییە’,
+‘Poor’:‘خراپ’,‘Average’:‘مامناوەند’,‘Good’:‘باش’,‘Very good’:‘زۆر باش’,
+‘Less than 5 minutes’:‘کەمتر لە ٥ خولەک’,
+‘5 to 10 minutes’:‘٥ تا ١٠ خولەک’,
+‘10 to 20 minutes’:‘١٠ تا ٢٠ خولەک’,
+‘More than 20 minutes’:‘زیاتر لە ٢٠ خولەک’,
+‘Only locals know’:‘تەنها خەڵکی شارەکە ئەیزانێ’,
+‘Only regular users know’:‘تەنها ئەوانەی بەردەوام بەکاریدێنێ ئەیزانن’,
+‘Only common lines are known’:‘تەنها ڕێگا باوەکان ناسراون’,
+‘There is an app for times and routes’:‘ئەپی فەرمی بۆ کات و ڕێگاکانیان هەیە’,
+‘Mobile app with live bus tracking’:‘ئەپی مۆبایل بە شوێنکەوتنی ڕاستەوخۆی پاسەکان’,
+‘More frequent buses’:‘پاسی زیاتر’,
+‘Clear published schedules’:‘خشتەی هاتن و چۆنی هێڵەکان ڕوون و بڵاوکراوە’,
+‘Better route coverage’:‘هێڵی پاس بۆ ناوچەی زیاتر’,
+‘More comfortable seats’:‘شوێنی دانیشتنی باشتر’,
+‘Lower ticket price’:‘نرخی کەمتر’,
+‘Cleaner buses’:‘پاسی پاک و تەمیزتر’,
+‘Buses accessible for people with disabilities’:‘پاس گونجاوبێت بۆ خاوەنپێداویستی تایبەت’,
+‘Blind guide lines at stops’:‘هێڵی ڕێنمایی بۆ نابینایان لە وێستگەکان’,
+‘Fixed and clear bus stops’:‘وێستگە (مەوقیف)ی دیاریکراو و ئاشکرا’,
+‘Route info displayed at stops’:‘زانیاری هێڵەکان لە وێستگە (مەوقیف)کاندا نیشاندراو بێت’,
+‘Fixed departure times from main terminal’:‘کاتی دەرچوونی دیاریکراو لە وێستگە (مەوقیف)ی سەرەکی’,
+‘Remove middle seats so people don't climb over others’:‘لابردنی کورسی ناوەراست بۆ ئەوەی ئەوەنە هەڵنەسی بۆ کەسی دواوە’
+};
+
+var KP={
+‘👤 Basic information’:’’,
+‘📋 Identity’:‘📋 ناسنامە’,
+‘🚌 Transport usage’:‘🚌 بەکارهێنانی گواستنەوە’,
+‘❌ Non-usage reasons’:‘❌ هۆکارەکانی بەکارنەهێنان’,
+‘⏱️ Travel time’:‘⏱️ کاتی گەشتکردن’,
+‘🔄 Transfers’:‘🔄 گۆڕینی پاس’,
+‘🗺️ Route convenience’:‘🗺️ ئاسانی ڕێگا’,
+‘📊 Service quality’:‘📊 کوالیتی خزمەتگوزاری’,
+‘💡 Improvements’:‘💡 باشترکردنەکان’,
+‘🧠 Awareness’:‘🧠 زانیاری’,
+‘💬 Your ideas’:‘💬 بۆچوون و پێشنیارەکانت’
+};
+
+var SEC=[
+{pill:‘👤 Basic information’, ctx:null, note:null, qs:[
+{id:‘q1’,col:‘q1_city’,text:‘Which province are you from?’,type:‘radio’,opts:PR},
+{id:‘q2’,col:‘q2_age’,text:‘What is your age group?’,type:‘radio’,opts:[‘Under 18’,‘18–25’,‘26–40’,‘41–60’,‘60+’]}
+]},
+{pill:‘📋 Identity’, ctx:null, note:null, qs:[
+{id:‘q3’,col:‘q3_identity’,text:’(Optional) Share your name, email or location’,hint:‘Choose what you are comfortable sharing’,type:‘nl’}
+]},
+{pill:‘🚌 Transport usage’, ctx:null, note:null, qs:[
+{id:‘q4’,col:‘q4_transp’,text:‘What do you mainly use for daily travel?’,type:‘radio’,opts:[‘Bus’,‘Taxi’,‘Private car’]},
+{id:‘q5’,col:‘q5_purpose’,text:‘If you use the bus, what is your main reason?’,hint:‘Select all that apply’,type:‘cb’,opts:[‘Work’,‘School / University’,‘Shopping’,‘Visiting friends or family’,‘Other’]}
+]},
+{pill:‘❌ Non-usage reasons’, ctx:null, note:null, qs:[
+{id:‘q6’,col:‘q6_reasons’,text:“If you don’t use buses — why?”,hint:‘Select all that apply’,type:‘cb’,
+opts:[‘No official app for schedules and routes’,‘I prefer using my own car’,‘No fixed bus stops’,‘Long waiting times’,“Bus routes don’t reach my area”,‘Buses are not clean’,‘Not enough seats’,‘Not accessible for people with special needs’]}
+]},
+{pill:‘⏱️ Travel time’,
+ctx:{krd:‘وای دانێ ئەچیت بۆ (زانکۆ، بازاڕ، سەردانی هاوڕێ…)’,en:‘Imagine you are going somewhere — university, the bazar, visiting a friend…’},
+note:null, qs:[
+{id:‘q7’,col:‘q7_same’,text:‘If the bus takes the same time as your car, would you take the bus?’,type:‘yn’},
+{id:‘q8’,col:‘q8_5min’,text:‘If the bus takes 5 minutes longer than your car, would you still take it?’,type:‘yn’},
+{id:‘q9’,col:‘q9_15min’,text:‘If the bus takes 10 to 15 minutes longer, would you still take it?’,type:‘yn’}
+]},
+{pill:‘🔄 Transfers’, ctx:null, note:null, qs:[
+{id:‘q10’,col:‘q10_transfers’,text:‘How many bus changes are you willing to make for one trip?’,type:‘radio’,
+opts:[‘No changes, direct — one bus’,‘1 change — two buses’,‘2 changes — three buses’,‘I would not use buses’]}
+]},
+{pill:‘🗺️ Route convenience’, ctx:null, note:null, qs:[
+{id:‘q11’,col:‘q11_route’,text:‘If there was a bus route near both your home and workplace, would you use it most of the time instead of your car?’,type:‘yn’}
+]},
+{pill:‘📊 Service quality’,
+ctx:null,
+note:null, qs:[
+{id:‘q12’,col:‘q12_punct’,text:‘How would you describe bus punctuality in your city?’,type:‘lk’,opts:[‘There is no schedule at all’,‘Poor’,‘Average’,‘Good’,‘Very good’]},
+{id:‘q14’,col:‘q14_info’,text:‘How easy is it to find bus route and schedule information?’,type:‘radio’,opts:[‘Only locals know’,‘Only regular users know’,‘Only common lines are known’,‘There is an app for times and routes’]}
+]},
+{pill:‘💡 Improvements’, ctx:null, note:null, qs:[
+{id:‘q15’,col:‘q15_impr’,text:‘What would make you use buses more?’,hint:‘Select all that apply’,type:‘cb’,
+opts:[‘Mobile app with live bus tracking’,‘More frequent buses’,‘Clear published schedules’,‘Better route coverage’,‘More comfortable seats’,‘Lower ticket price’,‘Cleaner buses’,‘Buses accessible for people with disabilities’,‘Blind guide lines at stops’,‘Fixed and clear bus stops’,‘Route info displayed at stops’,‘Fixed departure times from main terminal’,‘Remove middle seats so people don't climb over others’]}
+]},
+{pill:‘🧠 Awareness’, ctx:null, note:{krd:‘ئەم پرسیارە تایبەتە بە سلێمانی، بەڵام ئەگەر لە هەر شاری تری کوردستانیشەوەیت، بەپێی ئەزموونی خۆت وەڵام بدەوە — وەڵامەکەت بە هەمان شێوە گرنگە بۆمان.’,en:‘These questions are based on Sulaimani, but if you are from any other city in Kurdistan, please answer based on your own experience — your answer is equally valued.’}, qs:[
+{id:‘q16’,col:‘q16_aware’,text:‘Did you know Sulaimani has around 39 bus lines covering most of the city?’,type:‘yesno’}
+]},
+{pill:‘💬 Your ideas’, ctx:null, note:null, qs:[
+{id:‘q17’,col:‘q17_feedback’,text:‘Any ideas, suggestions or feedback? If you want to be part of this project and help make public transport digital and better across all of Kurdistan — write to us here.’,hint:‘Optional’,type:‘textarea’}
+]}
+];
+
+function saveDB(p){
+setSave(‘saving’);
+var h={‘Content-Type’:‘application/json’,‘apikey’:SK,‘Authorization’:‘Bearer ‘+SK,‘Prefer’:‘return=minimal’};
+if(!rEx){
+fetch(SU+’/rest/v1/survey_responses’,{method:‘POST’,headers:h,body:JSON.stringify(Object.assign({session_id:SID},p))})
+.then(function(r){if(r.ok){rEx=true;setSave(‘saved’);}else setSave(‘err’);}).catch(function(){setSave(‘err’);});
+} else {
+fetch(SU+’/rest/v1/survey_responses?session_id=eq.’+SID,{method:‘PATCH’,headers:h,body:JSON.stringify(Object.assign({updated_at:new Date().toISOString()},p))})
+.then(function(r){if(r.ok)setSave(‘saved’);else setSave(‘err’);}).catch(function(){setSave(‘err’);});
+}
+}
+
+function setSave(s){
+var d=document.getElementById(‘dt’),t=document.getElementById(‘st’);
+d.className=‘dot’+(s?’ ‘+s:’’);
+if(s===‘saving’){t.innerHTML=’<span class="sk2">پاراستن…</span> Saving\u2026’;}
+else if(s===‘saved’){t.innerHTML=’<span class="sk2">پارستراو</span> Saved’;setTimeout(function(){d.className=‘dot’;t.innerHTML=’<span class="sk2">ئامادەیە</span> Ready’;},2000);}
+else{t.innerHTML=’<span class="sk2">سەرنەکەوت</span> Failed’;}
+}
+
+function fq(id){for(var i=0;i<SEC.length;i++)for(var j=0;j<SEC[i].qs.length;j++)if(SEC[i].qs[j].id===id)return SEC[i].qs[j];return null;}
+
+function render(idx){
+var sec=SEC[idx];
+var kp=KP[sec.pill]||sec.pill;
+document.getElementById(‘pill’).innerHTML=(kp?’<span class="pk">’+kp+’</span><span class="ps"> · </span>’:’’)+sec.pill;
+var pct=Math.round(((idx+1)/SEC.length)*100);
+document.getElementById(‘pf’).style.width=pct+’%’;
+document.getElementById(‘pc’).textContent=pct+’%’;
+document.getElementById(‘sl’).textContent=‘Section ‘+(idx+1)+’ of ‘+SEC.length;
+document.getElementById(‘bb’).disabled=(idx===0);
+var nb=document.getElementById(‘nb’);
+if(idx===SEC.length-1){nb.innerHTML=’<span class="bk">ناردنی راپرسی</span>Submit survey’;nb.className=‘btn sub’;}
+else{nb.innerHTML=’<span class="bk">دواتر \u2190</span>Next \u2192’;nb.className=‘btn pri’;}
+// context box
+var ctxEl=document.getElementById(‘ctx’);
+if(sec.ctx){
+ctxEl.innerHTML=’<div class="ctx-box"><div class="ctx-krd">’+sec.ctx.krd+’</div><div class="ctx-en">’+sec.ctx.en+’</div></div>’;
+ctxEl.style.display=‘block’;
+} else { ctxEl.style.display=‘none’; ctxEl.innerHTML=’’; }
+// note box
+var noteEl=document.getElementById(‘note’);
+if(sec.note){
+noteEl.innerHTML=’<div class="note-box"><div class="note-krd">’+sec.note.krd+’</div><div class="note-en">’+sec.note.en+’</div></div>’;
+noteEl.style.display=‘block’;
+} else { noteEl.style.display=‘none’; noteEl.innerHTML=’’; }
+var ds=document.getElementById(‘ds’);ds.innerHTML=’’;
+for(var i=0;i<SEC.length;i++){var d=document.createElement(‘div’);d.className=‘sd’+(i<idx?’ dn’:i===idx?’ ac’:’’);ds.appendChild(d);}
+document.getElementById(‘qa’).innerHTML=sec.qs.map(rq).join(’’);
+restore(sec);bindAll();
+window.scrollTo({top:0,behavior:‘smooth’});
+}
+
+function rq(q){
+var kq=KQ[q.id]||’’;
+var head=’<div class="bq"><div class="bqe">’+q.text+’</div>’+(kq?’<div class="bqk">’+kq+’</div>’:’’)+’</div>’;
+var hint=’’;
+if(q.hint){hint=’<div class="bh"><span class="bhe">’+q.hint+’</span><span class="bhk">’+(q.hint===‘Select all that apply’?‘هەموو ئەوانەی دەگونجێن هەڵبژێرە’:‘ئەوەی ئارەزوومەندیت هاوبەش بکە’)+’</span></div>’;}
+var inner=’’;
+if(q.type===‘radio’){
+inner=’<div class="opts">’+q.opts.map(function(o){
+var ko=KO[o]||’’;
+var lbl=ko?’<span class="bo"><span class="boe">’+o+’</span><span class="bok">’+ko+’</span></span>’:o;
+return ‘<button class="opt" data-q="'+q.id+'" data-v="'+o+'" data-t="r"><div class="ci"><div class="cd"></div></div>’+lbl+’</button>’;
+}).join(’’)+’</div>’;
+} else if(q.type===‘cb’){
+inner=hint+’<div class="opts">’+q.opts.map(function(o){
+var ko=KO[o]||’’;
+var lbl=ko?’<span class="bo"><span class="boe">’+o+’</span><span class="bok">’+ko+’</span></span>’:o;
+return ‘<button class="opt" data-q="'+q.id+'" data-v="'+o+'" data-t="c"><div class="sq"><svg class="ck" width="9" height="9" viewBox="0 0 9 9" fill="none"><polyline points="1 4.5 3.5 7 8 1.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>’+lbl+’</button>’;
+}).join(’’)+’</div>’;
+} else if(q.type===‘lk’){
+inner=’<div class="lr">’+q.opts.map(function(o){
+var ko=KO[o]||o;
+return ‘<button class="lk" data-q="'+q.id+'" data-v="'+o+'"><span class="lkk">’+ko+’</span>’+o+’</button>’;
+}).join(’’)+’</div>’;
+} else if(q.type===‘yn’){
+inner=’<div class="yr">’+
+‘<button class="yn" data-q="'+q.id+'" data-v="Yes"><span class="ynk">بەڵێ</span>Yes</button>’+
+‘<button class="yn" data-q="'+q.id+'" data-v="Maybe"><span class="ynk">لەوانەیە</span>Maybe</button>’+
+‘<button class="yn" data-q="'+q.id+'" data-v="No"><span class="ynk">نەخێر</span>No</button>’+
+‘</div>’;
+} else if(q.type===‘yesno’){
+inner=’<div class="yr">’+
+‘<button class="yn" data-q="'+q.id+'" data-v="Yes"><span class="ynk">بەڵێ</span>Yes</button>’+
+‘<button class="yn" data-q="'+q.id+'" data-v="No"><span class="ynk">نەخێر</span>No</button>’+
+‘</div>’;
+} else if(q.type===‘nl’){
+inner=hint+
+‘<div class="nt">’+
+‘<button class="nb" id="nnb" onclick="nls(\'n\')"><span class="nk">✏️ ناوم بنووسە</span>✏️ Name</button>’+
+‘<button class="nb" id="neb" onclick="nls(\'e\')"><span class="nk">✉️ ئیمەیڵم بنووسە</span>✉️ Email</button>’+
+‘<button class="nb" id="nlb" onclick="nls(\'l\')"><span class="nk">📍 شوێنەکەم هاوبەش بکە</span>📍 Location</button>’+
+‘</div>’+
+‘<div class="nw" id="nnw"><input class="ni" id="nni" type="text" placeholder="ناوت بنووسە / Enter your name" oninput="saveNL(\'name\',this.value)"></div>’+
+‘<div class="nw" id="new2"><input class="ni" id="nei" type="email" placeholder="ئیمەیڵت بنووسە / Enter your email" oninput="saveNL(\'email\',this.value)"></div>’+
+‘<div class="nw" id="nlw">’+
+‘<button class="lb" id="lgb" onclick="gl()">’+
+‘<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>’+
+‘<span class="nk" style="font-size:12px;">کلیک بکە بۆ شوێنەکەم</span>Tap to get location’+
+‘</button>’+
+‘<div class="ls" id="ls"></div>’+
+‘</div>’+
+‘<span class="sl" onclick="nsk()"><span style="font-family:\'Noto Sans Arabic\',sans-serif;font-size:12px;direction:rtl;">ئەم پرسیارە تێپەڕ بکە</span> / Skip</span>’;
+} else if(q.type===‘textarea’){
+inner=’<textarea class="ni" style="min-height:120px;resize:vertical;" data-q="'+q.id+'" placeholder="بۆچوونت بنووسە، یان ئەگەر دەتەوێت بەشداری ئەم پرۆژەیە بکەیت بە زانیاری زیاتر یان پێشنیارێک، لێرە بنووسە... / Write your ideas or contact us to be part of this project..." oninput="saveTa(\''+q.id+'\',this.value)"></textarea>’;
+}
+return ‘<div class="qc" data-qid-card="'+q.id+'"><div class="qn">’+q.id.toUpperCase().replace(‘Q’,‘Q ‘)+’</div>’+head+inner+’</div>’;
+}
+
+function bindAll(){
+var area=document.getElementById(‘qa’);
+area.querySelectorAll(’.opt’).forEach(function(b){
+b.addEventListener(‘click’,function(){
+var qid=this.dataset.q,val=this.dataset.v,t=this.dataset.t;
+if(t===‘r’){
+area.querySelectorAll(’.opt[data-q=”’+qid+’”]’).forEach(function(x){x.classList.remove(‘sel’);});
+this.classList.add(‘sel’);A[qid]=val;
+var q=fq(qid);if(q){var p={};p[q.col]=val;saveDB(p);}
+} else {
+this.classList.toggle(‘sel’,!this.classList.contains(‘sel’));
+var vals=[];
+area.querySelectorAll(’.opt[data-q=”’+qid+’”].sel’).forEach(function(x){vals.push(x.dataset.v);});
+A[qid]=vals;var q2=fq(qid);if(q2){var p2={};p2[q2.col]=vals.join(’, ‘);saveDB(p2);}
+}
+});
+});
+area.querySelectorAll(’.lk’).forEach(function(b){
+b.addEventListener(‘click’,function(){
+var qid=this.dataset.q,val=this.dataset.v;
+area.querySelectorAll(’.lk[data-q=”’+qid+’”]’).forEach(function(x){x.classList.remove(‘sel’);});
+this.classList.add(‘sel’);A[qid]=val;
+var q=fq(qid);if(q){var p={};p[q.col]=val;saveDB(p);}
+});
+});
+area.querySelectorAll(’.yn’).forEach(function(b){
+b.addEventListener(‘click’,function(){
+var qid=this.dataset.q,val=this.dataset.v;
+area.querySelectorAll(’.yn[data-q=”’+qid+’”]’).forEach(function(x){x.classList.remove(‘y’,‘m’,‘n’);});
+this.classList.add(val===‘Yes’?‘y’:val===‘Maybe’?‘m’:‘n’);
+A[qid]=val;var q=fq(qid);if(q){var p={};p[q.col]=val;saveDB(p);}
+});
+});
+}
+
+function restore(sec){
+var area=document.getElementById(‘qa’);
+sec.qs.forEach(function(q){
+var s=A[q.id];if(!s)return;
+if(q.type===‘radio’){area.querySelectorAll(’.opt[data-q=”’+q.id+’”]’).forEach(function(b){if(b.dataset.v===s)b.classList.add(‘sel’);});}
+else if(q.type===‘cb’&&Array.isArray(s)){s.forEach(function(v){var b=area.querySelector(’.opt[data-q=”’+q.id+’”][data-v=”’+v+’”]’);if(b)b.classList.add(‘sel’);});}
+else if(q.type===‘lk’){area.querySelectorAll(’.lk[data-q=”’+q.id+’”]’).forEach(function(b){if(b.dataset.v===s)b.classList.add(‘sel’);});}
+else if(q.type===‘yn’||q.type===‘yesno’){area.querySelectorAll(’.yn[data-q=”’+q.id+’”]’).forEach(function(b){if(b.dataset.v===s)b.classList.add(s===‘Yes’?‘y’:s===‘Maybe’?‘m’:‘n’);});}
+});
+}
+
+function nls(m){
+[‘nnb’,‘neb’,‘nlb’].forEach(function(id){var el=document.getElementById(id);if(el)el.classList.remove(‘act’);});
+[‘nnw’,‘new2’,‘nlw’].forEach(function(id){var el=document.getElementById(id);if(el)el.classList.remove(‘show’);});
+var bm={n:‘nnb’,e:‘neb’,l:‘nlb’};
+var wm={n:‘nnw’,e:‘new2’,l:‘nlw’};
+if(document.getElementById(bm[m]))document.getElementById(bm[m]).classList.add(‘act’);
+if(document.getElementById(wm[m]))document.getElementById(wm[m]).classList.add(‘show’);
+}
+function saveNL(type,v){A.q3=type+’:’+v;var q=fq(‘q3’);if(q){var p={};p[q.col]=type+’:’+v;saveDB(p);}}
+function nsk(){A.q3=‘skipped’;}
+function gl(){
+var b=document.getElementById(‘lgb’),s=document.getElementById(‘ls’);
+if(!navigator.geolocation){s.textContent=‘Not supported’;return;}
+b.textContent=‘Getting location\u2026’;
+navigator.geolocation.getCurrentPosition(
+function(pos){
+var lat=pos.coords.latitude.toFixed(5),lng=pos.coords.longitude.toFixed(5);
+var v=‘lat:’+lat+’,lng:’+lng;A.q3=v;
+var q=fq(‘q3’);if(q){var p={};p[q.col]=v;saveDB(p);}
+b.className=‘lb got’;
+b.innerHTML=’<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Saved’;
+s.textContent=lat+’, ’+lng;s.style.color=‘var(–green)’;
+},
+function(){s.textContent=‘Could not get location.’;s.style.color=‘var(–red)’;b.textContent=‘Tap to get location’;}
+);
+}
+
+function saveTa(qid,v){
+A[qid]=v;
+var q=fq(qid);if(q){var p={};p[q.col]=v;saveDB(p);}
+}
+
+function go(dir){
+var next=cur+dir;
+if(next<0)return;
+if(next>=SEC.length){
+saveDB({completed:true});
+document.getElementById(‘sb’).style.display=‘none’;
+document.getElementById(‘ty’).style.display=‘block’;
+document.getElementById(‘tid’).textContent=’ID: ’+SID;
+return;
+}
+cur=next;render(cur);
+}
+
+render(0);
+</script>
+
+</body>
+</html>
